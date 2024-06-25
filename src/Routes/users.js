@@ -46,18 +46,24 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { id, password } = req.body;
+
     if (!id || !password) {
-      res.status(200).json({ message: "All The fields are required" });
+      return res.status(200).json({ message: "All The fields are required" });
     }
+
     let user = await UserModel.findOne({ username: id });
     if (!user) {
       user = await UserModel.findOne({ email: id });
     }
+
     if (!user) {
-      res.status(404).json({ message: "User not found" });
+      console.log("User not found");
+      return res.status(404).json({ message: "User not found" });
     }
+
     if (password !== user.password) {
-      res.status(404).json({ message: "Password didn't match" });
+      console.log("User found but password is wrong");
+      return res.status(404).json({ message: "Password didn't match" });
     }
     const payload = {
       id: user._id,
@@ -68,9 +74,12 @@ router.post("/login", async (req, res) => {
     const secret = process.env.JWT_SECRET;
     const token = await jwt.sign(payload, secret);
 
-    res.status(200).json({ message: "Signed In", token, userId: user._id });
+    return res
+      .status(200)
+      .json({ message: "Signed In", token, userId: user._id });
   } catch (err) {
-    res.status(500).json({ message: "Internal Server Error" });
+    console.log("Inside catch block");
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
