@@ -10,7 +10,7 @@ router.post("/register", async (req, res) => {
     const { name, username, password, mobile, email } = req.body;
 
     if (!name || !username || !password || !mobile || !email) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res.status(409).json({ message: "All fields are required" });
     }
 
     const mobileNo = Number(mobile);
@@ -20,7 +20,7 @@ router.post("/register", async (req, res) => {
 
     const userNameCheck = await UserModel.findOne({ username });
     if (userNameCheck) {
-      return res.status(409).json({ message: "Username already exists" });
+      return res.status(400).json({ message: "Username already exists" });
     }
 
     const emailCheck = await UserModel.findOne({ email });
@@ -57,12 +57,10 @@ router.post("/login", async (req, res) => {
     }
 
     if (!user) {
-      console.log("User not found");
       return res.status(404).json({ message: "User not found" });
     }
 
     if (password !== user.password) {
-      console.log("User found but password is wrong");
       return res.status(404).json({ message: "Password didn't match" });
     }
     const payload = {
