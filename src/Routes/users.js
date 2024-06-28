@@ -5,6 +5,22 @@ require("dotenv").config();
 
 const router = express.Router();
 
+const secret = process.env.JWT_SECRET;
+
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization;
+  if (token) {
+    jwt.verify(token, secret, (err) => {
+      if (err) {
+        return res.status(403).json({ message: "Token Not Valid" });
+      }
+      next();
+    });
+  } else {
+    return res.status(402).json({ message: "No token Found" });
+  }
+};
+
 router.post("/register", async (req, res) => {
   try {
     const { name, username, password, mobile, email } = req.body;
@@ -78,6 +94,16 @@ router.post("/login", async (req, res) => {
   } catch (err) {
     console.log("Inside catch block");
     return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.get("/:userId", verifyToken, async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const user = await UserModel.findById(userId);
+    return res.status(201).json({ user });
+  } catch (err) {
+    return res.status(500).json({ message: "Something went wrong" });
   }
 });
 
