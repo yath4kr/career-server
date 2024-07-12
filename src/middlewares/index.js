@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 
-//SUGGESTION: We will use this from now on
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization;
   const secret = process.env.JWT_SECRET;
@@ -17,4 +16,10 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-module.exports = { verifyToken };
+// This will console the https method and route, which will help in development process
+const routeLogger = (req, res, next) => {
+  console.log(req?.method, req?.originalUrl);
+  next();
+};
+
+module.exports = { verifyToken, routeLogger };

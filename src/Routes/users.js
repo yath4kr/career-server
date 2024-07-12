@@ -2,25 +2,12 @@ const express = require("express");
 const { UserModel } = require("../Models/Users");
 const jwt = require("jsonwebtoken");
 const { postUserHandler } = require("../controllers/users");
+const { verifyToken, routeLogger } = require("../middlewares/");
 require("dotenv").config();
 
 const router = express.Router();
 
-const secret = process.env.JWT_SECRET;
-
-const verifyToken = (req, res, next) => {
-  const token = req.headers.authorization;
-  if (token) {
-    jwt.verify(token, secret, (err) => {
-      if (err) {
-        return res.status(403).json({ message: "Token Not Valid" });
-      }
-      next();
-    });
-  } else {
-    return res.status(402).json({ message: "No token Found" });
-  }
-};
+router.use(routeLogger);
 
 router.post("/register", postUserHandler);
 

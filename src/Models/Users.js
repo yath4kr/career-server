@@ -8,6 +8,8 @@ const UserSchema = new mongoose.Schema({
   mobile: { type: Number, required: false },
 });
 
+const UserModel = mongoose.model("users", UserSchema);
+
 const create = async (user) => {
   const newUser = new UserModel({
     name: user.name,
@@ -27,7 +29,5 @@ const getByEmail = (email) => {
 const getByUsername = (username) => {
   return UserModel.findOne({ username });
 };
-
-const UserModel = mongoose.model("users", UserSchema);
 
 module.exports = { UserModel, create, getByEmail, getByUsername };
