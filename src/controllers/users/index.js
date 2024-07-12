@@ -1,4 +1,4 @@
-const { UserModel } = require("../../Models/Users");
+const { create, getByEmail, getByUsername } = require("../../Models/Users");
 const { validateInputFields } = require("../../validators/index");
 const { postUserSchema } = require("../../validators/users");
 
@@ -12,25 +12,23 @@ const postUserHandler = async (req, res) => {
 
     const { name, username, password, mobile, email } = req.body;
 
-    const userNameCheck = await UserModel.findOne({ username });
-    if (userNameCheck) {
+    let user = await getByUsername(username);
+    if (user) {
       return res.status(400).json({ message: "Username already exists" });
     }
 
-    const emailCheck = await UserModel.findOne({ email });
-    if (emailCheck) {
+    user = await getByEmail(email);
+    if (user) {
       return res.status(409).json({ message: "Email already exists" });
     }
 
-    const newUser = new UserModel({
+    await create({
       name,
       username,
       password,
       email,
       mobile,
     });
-
-    await newUser.save();
 
     res.status(201).json({ message: "User registered successfully" });
   } catch (err) {

@@ -8,5 +8,26 @@ const UserSchema = new mongoose.Schema({
   mobile: { type: Number, required: false },
 });
 
+const create = async (user) => {
+  const newUser = new UserModel({
+    name: user.name,
+    username: user.username,
+    password: user.password,
+    email: user.email,
+    mobile: user.mobile,
+  });
+
+  await newUser.save();
+};
+
+const getByEmail = (email) => {
+  return UserModel.findOne({ email });
+};
+
+const getByUsername = (username) => {
+  return UserModel.findOne({ username });
+};
+
 const UserModel = mongoose.model("users", UserSchema);
-module.exports = { UserModel };
+
+module.exports = { UserModel, create, getByEmail, getByUsername };
