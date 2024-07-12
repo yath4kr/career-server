@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
 
 const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -7,6 +8,19 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   mobile: { type: Number, required: false },
 });
+
+// We have used function signature because the arrow function does not have this
+UserSchema.methods.generateAuthToken = async function () {
+  const secret = process.env.JWT_SECRET;
+
+  const payload = {
+    id: this._id,
+    name: this.name,
+    username: this.username,
+  };
+
+  return await jwt.sign(payload, secret);
+};
 
 const UserModel = mongoose.model("users", UserSchema);
 

@@ -1,6 +1,5 @@
 const express = require("express");
 const { UserModel } = require("../../models/users");
-const jwt = require("jsonwebtoken");
 const { postUserHandler, getUserHandler } = require("../../controllers/users");
 const { verifyToken, routeLogger } = require("../../middlewares");
 require("dotenv").config();
@@ -31,14 +30,8 @@ router.post("/login", async (req, res) => {
     if (password !== user.password) {
       return res.status(404).json({ message: "Password didn't match" });
     }
-    const payload = {
-      id: user._id,
-      name: user.name,
-      username: user.username,
-    };
 
-    const secret = process.env.JWT_SECRET;
-    const token = await jwt.sign(payload, secret);
+    const token = await user.generateAuthToken();
 
     return res
       .status(200)
