@@ -22,6 +22,16 @@ const create = async (user) => {
   await newUser.save();
 };
 
+const getById = async (userId) => {
+  try {
+    const userRecord = await UserModel.findById(userId);
+    return userRecord;
+  } catch (error) {
+    // As when the on record found the findById throws error so in that case we will return null
+    return null;
+  }
+};
+
 const getByEmail = (email) => {
   return UserModel.findOne({ email });
 };
@@ -30,4 +40,4 @@ const getByUsername = (username) => {
   return UserModel.findOne({ username });
 };
 
-module.exports = { UserModel, create, getByEmail, getByUsername };
+module.exports = { UserModel, create, getByEmail, getById, getByUsername };

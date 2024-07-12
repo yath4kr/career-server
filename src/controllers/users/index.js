@@ -1,6 +1,12 @@
-const { create, getByEmail, getByUsername } = require("../../Models/Users");
+const {
+  create,
+  getByEmail,
+  getById,
+  getByUsername,
+} = require("../../models/users");
 const { validateInputFields } = require("../../validators/index");
 const { postUserSchema } = require("../../validators/users");
+const _ = require("lodash");
 
 const postUserHandler = async (req, res) => {
   try {
@@ -36,4 +42,30 @@ const postUserHandler = async (req, res) => {
   }
 };
 
-module.exports = { postUserHandler };
+const getUserHandler = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const user = await getById(userId);
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: `No record found for user with id: ${userId}` });
+    }
+
+    //TODO: _.omit can be used, but for some strange reason it is not working for me
+    const filteredResponse = _.pick(user, [
+      "_id",
+      "name",
+      "email",
+      "username",
+      "mobile",
+    ]);
+
+    return res.status(201).json({ user: filteredResponse });
+  } catch (err) {
+    return res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+module.exports = { postUserHandler, getUserHandler };

@@ -1,8 +1,8 @@
 const express = require("express");
-const { UserModel } = require("../Models/Users");
+const { UserModel } = require("../../models/users");
 const jwt = require("jsonwebtoken");
-const { postUserHandler } = require("../controllers/users");
-const { verifyToken, routeLogger } = require("../middlewares/");
+const { postUserHandler, getUserHandler } = require("../../controllers/users");
+const { verifyToken, routeLogger } = require("../../middlewares");
 require("dotenv").config();
 
 const router = express.Router();
@@ -49,14 +49,6 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/:userId", verifyToken, async (req, res) => {
-  try {
-    const userId = req.params.userId;
-    const user = await UserModel.findById(userId);
-    return res.status(201).json({ user });
-  } catch (err) {
-    return res.status(500).json({ message: "Something went wrong" });
-  }
-});
+router.get("/:userId", verifyToken, getUserHandler);
 
 module.exports = router;
