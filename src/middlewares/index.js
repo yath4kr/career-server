@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { ENVIRONMENT } = require("../constants");
 
 const verifyToken = (req, res, next) => {
   const token = req.headers.authorization;
@@ -18,7 +19,9 @@ const verifyToken = (req, res, next) => {
 
 // This will console the https method and route, which will help in development process
 const routeLogger = (req, res, next) => {
-  console.log(req?.method, req?.originalUrl);
+  if (process.env.NODE_ENV === ENVIRONMENT.DEVELOPMENT) {
+    console.log(req?.method, req?.originalUrl);
+  }
   next();
 };
 

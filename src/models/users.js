@@ -27,7 +27,7 @@ const getById = async (userId) => {
     const userRecord = await UserModel.findById(userId);
     return userRecord;
   } catch (error) {
-    // As when the on record found the findById throws error so in that case we will return null
+    // As when no record found then findById throws error so in that case we will return null
     return null;
   }
 };

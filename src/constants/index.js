@@ -1,3 +1,8 @@
 const DEFAULT_PORT = 5000;
 
-module.exports = { DEFAULT_PORT };
+const ENVIRONMENT = {
+  DEVELOPMENT: "development",
+  PRODUCTION: "production",
+};
+
+module.exports = { DEFAULT_PORT, ENVIRONMENT };
