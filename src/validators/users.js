@@ -8,4 +8,9 @@ const postUserSchema = Joi.object({
   mobile: Joi.number().integer().min(1000000000).max(9999999999).required(),
 });
 
-module.exports = { postUserSchema };
+const postAuthSchema = Joi.object({
+  id: Joi.string().trim().required(),
+  password: Joi.string().trim().required(),
+});
+
+module.exports = { postAuthSchema, postUserSchema };

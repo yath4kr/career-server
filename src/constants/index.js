@@ -5,4 +5,6 @@ const ENVIRONMENT = {
   PRODUCTION: "production",
 };
 
-module.exports = { DEFAULT_PORT, ENVIRONMENT };
+const SALT_ROUND = 10;
+
+module.exports = { DEFAULT_PORT, ENVIRONMENT, SALT_ROUND };

@@ -1,3 +1,5 @@
+const _ = require("lodash");
+
 const {
   create,
   getByEmail,
@@ -5,8 +7,7 @@ const {
   getByUsername,
 } = require("../../models/users");
 const { validateInputFields } = require("../../validators/index");
-const { postUserSchema } = require("../../validators/users");
-const _ = require("lodash");
+const { postAuthSchema, postUserSchema } = require("../../validators/users");
 
 const postUserHandler = async (req, res) => {
   try {
@@ -42,6 +43,39 @@ const postUserHandler = async (req, res) => {
   }
 };
 
+const postAuthHandler = async (req, res) => {
+  try {
+    const error = validateInputFields(postAuthSchema, req.body);
+
+    if (error) {
+      return res.status(200).json({ message: error });
+    }
+
+    const { id, password } = req.body;
+
+    let user = await getByUsername(id);
+    if (!user) {
+      user = await getByEmail(id);
+    }
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (password !== user.password) {
+      return res.status(404).json({ message: "Password didn't match" });
+    }
+
+    const token = await user.generateAuthToken();
+
+    return res
+      .status(200)
+      .json({ message: "Signed In", token, userId: user._id });
+  } catch (err) {
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 const getUserHandler = async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -68,4 +102,4 @@ const getUserHandler = async (req, res) => {
   }
 };
 
-module.exports = { postUserHandler, getUserHandler };
+module.exports = { getUserHandler, postAuthHandler, postUserHandler };
