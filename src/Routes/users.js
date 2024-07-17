@@ -1,5 +1,5 @@
 const express = require("express");
-const { UserModel } = require("../Models/Users");
+const { UserModel } = require("../Models/Users.js");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
@@ -92,7 +92,6 @@ router.post("/login", async (req, res) => {
       .status(200)
       .json({ message: "Signed In", token, userId: user._id });
   } catch (err) {
-    console.log("Inside catch block");
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
