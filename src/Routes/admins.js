@@ -29,7 +29,8 @@ router.post("/login", async (req, res) => {
     if (!email || !password) {
       return res.status(200).json({ message: "All The fields are required" });
     }
-    user = await AdminModel.findOne({ email });
+
+    const user = await AdminModel.findOne({ email });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -63,12 +64,65 @@ router.get("/fetchUsers", verifyToken, async (req, res) => {
   }
 });
 
+router.get("/fetchInfluencers", verifyToken, async (req, res) => {
+  try {
+    const influencers = await InstructorModel.find({});
+    return res.status(201).json({ influencers });
+  } catch (err) {
+    return res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
 router.post("/addInfluencer", verifyToken, async (req, res) => {
   try {
     const data = req.body;
     const newInstructor = new InstructorModel(data);
     await newInstructor.save();
+    return res.status(200).json({ message: "Added" });
   } catch (err) {
+    return res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+router.post("/deleteInfluencer", verifyToken, async (req, res) => {
+  try {
+    const { id } = req.body;
+    if (!id) {
+      return res.status(400).json({ message: "Id required" });
+    }
+    const result = await InstructorModel.findByIdAndDelete({ _id: id });
+    console.log(result);
+    return res.status(200).json({ message: "Deleted" });
+  } catch (err) {
+    return res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+router.post("/updateInfluencer", verifyToken, async (req, res) => {
+  try {
+    const { _id, name, title, description, books, courses, imageUrl } =
+      req.body;
+
+    if (!_id) {
+      return res.status(400).json({ message: "Id required" });
+    }
+
+    const updatedInfluencer = await InstructorModel.findByIdAndUpdate(
+      _id,
+      { name, title, description, books, courses, imageUrl },
+      { new: true }
+    );
+
+    if (!updatedInfluencer) {
+      return res.status(404).json({ message: "Influencer not found" });
+    }
+
+    return res.status(200).json({
+      message: "Influencer updated successfully",
+      influencer: updatedInfluencer,
+    });
+  } catch (err) {
+    console.error(err);
     return res.status(500).json({ message: "Something went wrong" });
   }
 });
