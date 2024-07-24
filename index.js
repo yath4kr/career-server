@@ -4,6 +4,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const userRouter = require("./src/Routes/users");
 const adminRouter = require("./src/Routes/admins");
+const clientRouter = require("./src/Routes/client");
 
 const app = express();
 const port = 5000;
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use(cors());
 app.use("/users", userRouter);
 app.use("/admins", adminRouter);
+app.use("/clients", clientRouter);
 
 mongoose
   .connect(mongo_URL)
