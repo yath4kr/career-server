@@ -12,6 +12,7 @@ const InstructorSchema = new mongoose.Schema({
   courses: [courseBookSchema],
   books: [courseBookSchema],
   imageUrl: { type: String },
+  categories: { type: [String], default: [] },
 });
 
 const InstructorModel = mongoose.model("instructors", InstructorSchema);

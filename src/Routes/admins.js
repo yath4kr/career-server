@@ -3,6 +3,7 @@ const { AdminModel } = require("../Models/Admins");
 const { UserModel } = require("../Models/Users");
 const { InstructorModel } = require("../Models/Instructors");
 const jwt = require("jsonwebtoken");
+const { CategoryModel } = require("../Models/Categories");
 require("dotenv").config();
 
 const router = express.Router();
@@ -100,8 +101,16 @@ router.post("/deleteInfluencer", verifyToken, async (req, res) => {
 
 router.post("/updateInfluencer", verifyToken, async (req, res) => {
   try {
-    const { _id, name, title, description, books, courses, imageUrl } =
-      req.body;
+    const {
+      _id,
+      name,
+      title,
+      description,
+      books,
+      courses,
+      imageUrl,
+      categories,
+    } = req.body;
 
     if (!_id) {
       return res.status(400).json({ message: "Id required" });
@@ -109,7 +118,7 @@ router.post("/updateInfluencer", verifyToken, async (req, res) => {
 
     const updatedInfluencer = await InstructorModel.findByIdAndUpdate(
       _id,
-      { name, title, description, books, courses, imageUrl },
+      { name, title, description, books, courses, imageUrl, categories },
       { new: true }
     );
 
@@ -123,6 +132,30 @@ router.post("/updateInfluencer", verifyToken, async (req, res) => {
     });
   } catch (err) {
     console.error(err);
+    return res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+router.post("/addCategory", verifyToken, async (req, res) => {
+  try {
+    const { name, description } = req.body;
+    const newCategory = new CategoryModel({ name, description });
+    await newCategory.save();
+    return res.status(200).json({ message: "Added" });
+  } catch (err) {
+    return res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+router.post("/deleteCategory", verifyToken, async (req, res) => {
+  try {
+    const { id } = req.body;
+    if (!id) {
+      return res.status(400).json({ message: "Id required" });
+    }
+    const result = await CategoryModel.findByIdAndDelete({ _id: id });
+    return res.status(200).json({ message: "Deleted" });
+  } catch (err) {
     return res.status(500).json({ message: "Something went wrong" });
   }
 });
