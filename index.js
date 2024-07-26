@@ -7,7 +7,7 @@ const adminRouter = require("./src/Routes/admins");
 const clientRouter = require("./src/Routes/client");
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 const mongo_URL = process.env.MONGO_URL;
 
